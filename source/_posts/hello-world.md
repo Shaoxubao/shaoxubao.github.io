@@ -48,3 +48,8 @@ More info: [Deployment](https://hexo.io/docs/deployment.html)
 
 **
 
+### hexo 备份方式：
+
+​	1、github的hexo仓库创建hexo分支，将源文件上传至这个分支；
+
+​	2、在另外电脑也可同步操作这个博客库，git clone 博客库，在hexo分支开发，先执行npm install......
