@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+  
+    
+    <entry>
+      <title>Java之ThreadLocal浅析</title>
+      <link href="/2019/10/22/Java%E4%B9%8BThreadLocal%E6%B5%85%E6%9E%90/"/>
+      <url>/2019/10/22/Java%E4%B9%8BThreadLocal%E6%B5%85%E6%9E%90/</url>
+      
+        <content type="html"><![CDATA[<h1 id="Java之ThreadLocal浅析"><a href="#Java之ThreadLocal浅析" class="headerlink" title="Java之ThreadLocal浅析"></a>Java之ThreadLocal浅析</h1><h3 id="一、ThreadLocal介绍"><a href="#一、ThreadLocal介绍" class="headerlink" title="一、ThreadLocal介绍"></a>一、ThreadLocal介绍</h3><pre class=" language-xml"><code class="language-xml">    ThreadLocal 又名线程局部变量 ，是 Java 中一种较为特殊的线程绑定机制，可以为每一个使用该变量的线程都提供一个变量值的副本，并且每一个线程都可以独立地改变自己的副本，而不会与其它线程的副本发生冲突。一般而言，通过 ThreadLocal 存取的数据总是与当前线程相关，也就是说，JVM 为每个运行的线程绑定了私有的本地实例存取空间，从而为多线程环境常出现的并发访问问题提供了一种隔离机制 。    如果一段代码中所需要的数据必须与其他代码共享，那就看看这些共享数据的代码能否保证在同一个线程中执行？如果能保证，我们就可以把共享数据的可见范围限制在同一个线程之内，这样，无须同步也能保证线程之间不出现数据争用的问题。也就是说，如果一个某个变量要被某个线程 独享，那么我们就可以通过ThreadLocal来实现线程本地存储功能。    从JDK中理解其特点：    （1）每个线程都有关于该 ThreadLocal变量 的私有值    每个线程都有一个独立于其他线程的上下文来保存这个变量的值，并且对其他线程是不可见的    。    （2）独立于变量的初始值     ThreadLocal 可以给定一个初始值，这样每个线程就会获得这个初始化值的一个拷贝，并且每个线程对这个值的修改对其他线程是不可见的。    （3）将某个类的状态与线程相关联     我们从JDK中对ThreadLocal的描述中可以看出，ThreadLocal的一个重要作用是就是将类的状态与线程关联起来，这个时候通常的解决方案就是在这个类中定义一个 private static ThreadLocal 实例。</code></pre><h3 id="ThreadLocal应用"><a href="#ThreadLocal应用" class="headerlink" title="ThreadLocal应用"></a>ThreadLocal应用</h3><h3 id="ThreadLocal源码剖析"><a href="#ThreadLocal源码剖析" class="headerlink" title="ThreadLocal源码剖析"></a>ThreadLocal源码剖析</h3><h3 id="Thread同步机制的比较（摘自CSDN）"><a href="#Thread同步机制的比较（摘自CSDN）" class="headerlink" title="Thread同步机制的比较（摘自CSDN）"></a>Thread同步机制的比较（摘自<a href="http://blog.csdn.net/lufeng20/article/details/24314381" target="_blank" rel="noopener">CSDN</a>）</h3><pre class=" language-xml"><code class="language-xml">    ThreadLocal和线程同步机制相比有什么优势呢？ThreadLocal和线程同步机制都是为了解决多线程中相同变量的访问冲突问题。    在同步机制中，通过对象的锁机制保证同一时间只有一个线程访问变量。这时该变量是多个线程共享的，使用同步机制要求程序慎密地分析什么时候对变量进行读写，什么时候需要锁定某个对象，什么时候释放对象锁等繁杂的问题，程序设计和编写难度相对较大。    而ThreadLocal则从另一个角度来解决多线程的并发访问。ThreadLocal会为每一个线程提供一个独立的变量副本，从而隔离了多个线程对数据的访问冲突。因为每一个线程都拥有自己的变量副本，从而也就没有必要对该变量进行同步了。ThreadLocal提供了线程安全的共享对象，在编写多线程代码时，可以把不安全的变量封装进ThreadLocal。    由于ThreadLocal中可以持有任何类型的对象，低版本JDK所提供的get()返回的是Object对象，需要强制类型转换。但JDK 5.0通过泛型很好的解决了这个问题，在一定程度地简化ThreadLocal的使用，代码清单 9 2就使用了JDK 5.0新的ThreadLocal<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>T</span><span class="token punctuation">></span></span>版本。    概括起来说，对于多线程资源共享的问题，同步机制采用了“以时间换空间”的方式，而ThreadLocal采用了“以空间换时间”的方式。前者仅提供一份变量，让不同的线程排队访问，而后者为每一个线程都提供了一份变量，因此可以同时访问而互不影响。    Spring使用ThreadLocal解决线程安全问题我们知道在一般情况下，只有无状态的Bean才可以在多线程环境下共享，在Spring中，绝大部分Bean都可以声明为singleton作用域。就是因为Spring对一些Bean（如RequestContextHolder、TransactionSynchronizationManager、LocaleContextHolder等）中非线程安全状态采用ThreadLocal进行处理，让它们也成为线程安全的状态，因为有状态的Bean就可以在多线程中共享了。    一般的Web应用划分为展现层、服务层和持久层三个层次，在不同的层中编写对应的逻辑，下层通过接口向上层开放功能调用。在一般情况下，从接收请求到返回响应所经过的所有程序调用都同属于一个线程，同一线程贯通三层这样你就可以根据需要，将一些非线程安全的变量以ThreadLocal存放，在同一次请求响应的调用线程中，所有关联的对象引用到的都是同一个变量。</code></pre>]]></content>
+      
+      
+      <categories>
+          
+          <category> Java </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Java </tag>
+            
+            <tag> 多线程 </tag>
+            
+            <tag> 并发 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Java之线程池探索</title>
+      <link href="/2019/10/20/Java%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%8E%A2%E7%B4%A2/"/>
+      <url>/2019/10/20/Java%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%8E%A2%E7%B4%A2/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> Java </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Java </tag>
+            
+            <tag> 多线程 </tag>
+            
+            <tag> 并发 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>hello world</title>
+      <link href="/2019/09/07/hello-world/"/>
+      <url>/2019/09/07/hello-world/</url>
+      
+        <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post（在博客根目录下）"><a href="#Create-a-new-post（在博客根目录下）" class="headerlink" title="Create a new post（在博客根目录下）"></a>Create a new post（在博客根目录下）</h3><pre class=" language-bash"><code class="language-bash">$ hexo new <span class="token string">"My New Post"</span></code></pre><p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><pre class=" language-bash"><code class="language-bash">$ hexo server</code></pre><p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><pre class=" language-bash"><code class="language-bash">$ hexo generate</code></pre><p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><pre class=" language-bash"><code class="language-bash">$ hexo deploy</code></pre><p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p><p>**</p><h3 id="常见命令"><a href="#常见命令" class="headerlink" title="常见命令"></a>常见命令</h3><pre class=" language-java"><code class="language-java">hexo <span class="token keyword">new</span> <span class="token string">"postName"</span> #新建文章hexo <span class="token keyword">new</span> <span class="token class-name">page</span> <span class="token string">"pageName"</span> #新建页面hexo generate #生成静态页面至<span class="token keyword">public</span>目录hexo server #开启预览访问端口（默认端口<span class="token number">4000</span>，<span class="token string">'ctrl + c'</span>关闭server）hexo deploy #部署到GitHubhexo help  # 查看帮助hexo version  #查看Hexo的版本缩写：hexo n <span class="token operator">==</span> hexo <span class="token keyword">new</span><span class="token class-name">hexo</span> g <span class="token operator">==</span> hexo generatehexo s <span class="token operator">==</span> hexo serverhexo d <span class="token operator">==</span> hexo deploy组合命令：hexo s <span class="token operator">-</span>g #生成并本地预览hexo d <span class="token operator">-</span>g #生成并上传</code></pre><h3 id="hexo-备份方式："><a href="#hexo-备份方式：" class="headerlink" title="hexo 备份方式："></a>hexo 备份方式：</h3><p>​    1、github的hexo仓库创建hexo分支，将源文件上传至这个分支；</p><p>​    2、在另外电脑也可同步操作这个博客库，git clone 博客库，在hexo分支开发，先执行npm install……</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> hexo </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Typora </tag>
+            
+            <tag> Markdown </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
+</search>
